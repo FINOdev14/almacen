@@ -43,4 +43,3 @@ const reviewSchema = [`
 
 `];
 module.exports = reviewSchema;
-//colletionP: [Product]

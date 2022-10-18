@@ -12,11 +12,13 @@ const Product_Create = async (_, { productInput }) => {
       description, valorProduct, 
       totalNumber, onSale
     } = productInput;
+
     await new product({
       _id:ID,categoyId,
       nameProduct,description,
       valorProduct,totalNumber,onSale
     }).save();
+
     return ID;
   } catch (e) {
     return e;
@@ -26,7 +28,10 @@ const Product_Create = async (_, { productInput }) => {
 const Product_Update = async(_, { productInput }) => {
   try {
     await product.findByIdAndUpdate(
-      productInput._id, {$set: productInput},{new: true});
+      productInput._id, {
+        $set: productInput
+      },{new: true});
+
     return productInput._id;
   } catch (e) {
     return e;
@@ -108,8 +113,14 @@ const Product_Get = async (_, {filter={}, option={}})=>{
 
 const Product_Delete = async (_, { _id })=>{
   try {
-    await product.findByIdAndUpdate(_id, {$set: {isRemove: true, onSale:false, totalNumber:0}});
-    await review.updateMany({productId:_id},{$set:{isRemove:true}})
+    await product.findByIdAndUpdate(_id, {
+      $set: {isRemove: true, onSale:false, totalNumber:0}
+    });
+
+    await review.updateMany({
+      productId:_id},{$set:{isRemove:true}
+    });
+    
     return true;
 
   } catch (e) {

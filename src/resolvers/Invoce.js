@@ -14,9 +14,6 @@ const Invoice_Create = async (_, { invoiceInput }) => {
       valortotal,
     } = invoiceInput.producto);
 
-
-    let volo = await contentProduct.valorProduct*contentProduct.quantity;
-    //console.log(  await contentProduct[0].valorProduct);
     let count = await contentProduct.length;
     let ivaporcen = invoiceInput.iva;
     let Product= [];
@@ -24,24 +21,28 @@ const Invoice_Create = async (_, { invoiceInput }) => {
     let B = 0;let A = 1; 
     for (let i = 0; i < count; i++) {
       let productId = await contentProduct[i].productId;
-      let valorTotalUnit = await contentProduct[i].valorProduct*await contentProduct[i].quantity;
-      let p = Product.push({productId,valorTotalUnit});
+
+      let valorTotalUnit =
+      await contentProduct[i].valorProduct*
+      await contentProduct[i].quantity;
+
+      Product.push({productId,valorTotalUnit});
       }
     let countTotal = Product.length;
     let actotal = 0;
     for (let j = 0; j < countTotal; j++) {
-      let valorTotalProduct = Product[B].valorTotalUnit;
+      let valorTotalProduct = 
+      Product[B].valorTotalUnit;
+
       actotal = valorTotalProduct + actotal;
       total   = actotal;
       B++; A++; 
     }
 
-    console.log("fuera: "+actotal);
-    console.log("fuera: "+Product[0].valorTotalUnit+" : "+Product[1].valorTotalUnit);
     let { numInvoce, numProduct, pricetotal,Total,
       Iva,iva,infoInvoice } = invoiceInput;
     
-     let ivat = (actotal*0.19);
+     let ivat = (actotal*ivaporcen/100);
       Total = actotal;
       Iva = ivat;
       infoInvoice=Product
@@ -79,7 +80,7 @@ const Invoice_Update = async (_, { invoiceInput }) => {
 
 const Invoice_Save = async (_, { invoiceInput }) => {
   try {
-    console.log("hola1111");
+    
     const actions = {
       create: Invoice_Create,
       update: Invoice_Update,
@@ -121,7 +122,10 @@ const Invoice_Get = async (_, { filter = {}, option = {} }) => {
 
 const Invoice_Delete = async (_, { _id }) => {
   try {
-    await invoice.findByIdAndUpdate(_id, { $set: { isRemove: true } });
+    await invoice.findByIdAndUpdate(_id, {
+       $set: { isRemove: true } 
+    });
+    
     return true;
   } catch (e) {
     return e;

@@ -1,7 +1,6 @@
 const review = require('../Models/Review');
-const Product= require('./Product');
 const { generateId, handlePagination } = require('@codecraftkit/utils');
-const Review = require('../Models/Review');
+
 // U+2735, UTF-8: E2 9C B5
 const note = {
 "1":{_id:"1",  name: "✩"},"2":{_id:"2",  name: "✩✯"},
@@ -12,8 +11,16 @@ const note = {
 const Review_Create = async (_, { reviewInput }) => {
     try {
         const ID = generateId();
-        const {description,noteId,productId} = reviewInput;
-        await new review({_id:ID,description,noteId,productId}).save();
+
+        const {
+          description,noteId,productId
+        } = reviewInput;
+
+        await new review({
+          _id:ID,description,
+          noteId,productId
+        }).save();
+
         return ID;
     } catch (e) {
         return e;
@@ -22,8 +29,13 @@ const Review_Create = async (_, { reviewInput }) => {
 
 const Review_Update = async (_, { reviewInput }) => {
     try {
-        await review.findByIdAndUpdate(reviewInput._id, {$set: reviewInput},{new: true});
-        return reviewInput.id
+        await review.findByIdAndUpdate(
+          reviewInput._id, {
+            $set: reviewInput
+          },{new: true});
+
+        return reviewInput.id;
+
     } catch (e) {
         return e;
     }
@@ -36,6 +48,7 @@ const Review_Save = async (_, { reviewInput }) => {
         update: Review_Update
       }
       const action = reviewInput._id ? 'update' : 'create';
+
       return await actions[action](_,{reviewInput});
     } catch (e) {
         return e;
@@ -44,7 +57,9 @@ const Review_Save = async (_, { reviewInput }) => {
 
 const Review_Delete = async (_, { _id }) => {
   try {
-    await review.findByIdAndUpdate(_id,{$set: {isRemove: true}});
+    await review.findByIdAndUpdate(
+      _id,{$set: {isRemove: true}});
+      
     return true;
   } catch (e) {
     return e
@@ -70,6 +85,7 @@ const Review_Get = async  (_, {filter={}, option={}}) => {
     for (let noteFilter of result){
       noteFilter.note = note[noteFilter.noteId];
     }
+
     return result;
   } catch (e) {
     return e;
