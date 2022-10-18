@@ -4,7 +4,9 @@ const invoiceSchema = [`
     numInvoce: Int
     producto: [Producto]
     numProduct: Int
-    pricetotal: Float
+    infoInvoice: [InfoInvoice]
+    Total:Int
+    Iva:Int
     iva: Float
     createdAt: GraphQLDateTime
     updatedAt: GraphQLDateTime
@@ -13,9 +15,16 @@ const invoiceSchema = [`
   type Producto{
     productId: String
     nameProduct: String
-    valorProduct: Int
     quantity: Int
+    valortotal: Int
+    
   }
+  type InfoInvoice{
+    productId: String
+    valorTotalUnit: Int
+    
+  }
+  
 
   input Invoice_Filter{
     _id: String
@@ -27,6 +36,7 @@ const invoiceSchema = [`
     nameProduct: String
     valorProduct: Int
     quantity: Int
+    valortotal: Int
   }
 
   input Invoice_Input{

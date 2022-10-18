@@ -58,6 +58,7 @@ const Product_Get = async (_, {filter={}, option={}})=>{
     if(nameProduct)query.nameProduct = {$regex: nameProduct, $Options:'i'};
     if(valorProduct)query.valorProduct = valorProduct;
     console.log(query);
+
     let aggregate = [
       {
         $match: query,          
