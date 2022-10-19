@@ -16,7 +16,7 @@ const invoiceSchema = [`
     productId: String
     nameProduct: String
     quantity: Int
-    valortotal: Int
+    valorProduct: Int
     
   }
   type InfoInvoice{

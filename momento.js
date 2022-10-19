@@ -1,10 +1,66 @@
+
+
+
+// --------------**********************--------------------
+
 const { generateId, handlePagination } = require('@codecraftkit/utils');
+const { aggregate } = require('../Models/invoice');
 
 const invoice = require('../Models/invoice');
+
 
 const Invoice_Create = async (_, { invoiceInput }) => {
   try {
     const ID = generateId();
+    let aggregateProducto = [
+      {
+        $match:{
+          isRemove: false
+        }
+      },{
+          $lookup:{
+            from: "product",
+            localField: "producto.productId",
+            foreignField: "_id",
+            as: "result"
+          }
+      },{
+          $project:{
+            _id: "$result._id",
+            nameProduct: "$result.nameProduct",
+            valorProduct:"$result.valorProduct"
+          }
+       }
+
+    ];
+    let arrayProduct = [];
+    let arrayProductRes = [];
+    let contenProduct = (await invoice.aggregate(aggregateProducto));
+
+    arrayProduct.push(contenProduct)
+    let countPp = arrayProduct[0].length;
+
+    for (let i = 0; i < countPp; i++) {
+      let countRoute = ((arrayProduct[0][i]._id).length);
+      let product_id = "";
+      let nameProducto = "";
+      let valorProduct = "";
+
+      for  (let j =  0; j < countRoute; j++) {
+        let numivoicek = i+1;
+        product_id   = (arrayProduct[0][i]._id)[j];
+        nameProducto = ((arrayProduct[0][i]).nameProduct)[j];
+        valorProduct = ((arrayProduct[0][i]).valorProduct)[j];
+        
+        arrayProductRes.push({numivoicek,prop:{product_id,nameProducto,valorProduct}})
+        
+      }
+      
+    }
+    console.log(arrayProductRes);
+
+
+
     const contentProduct = ({
       productId,
       nameProduct,
@@ -55,7 +111,7 @@ const Invoice_Create = async (_, { invoiceInput }) => {
       Total,
       Iva,
       iva,
-    }).save();
+    });
     return ID;
   } catch (e) {
     return e;
