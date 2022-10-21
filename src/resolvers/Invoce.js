@@ -1,113 +1,58 @@
 const { generateId, handlePagination } = require('@codecraftkit/utils');
 
-const invoice = require('../Models/invoice');
+const InvoiceModel = require('../Models/invoice');
 
-const Invoice_Create = async (_, { invoiceInput }) => {
+const Invoice_create = async (_, { invoiceInput = {} }) => {
   try {
-    const ID = generateId();
-    const contentProduct = ({
-      productId,
-      nameProduct,
-      valorProduct,
-      quantity,
-      valortotal,
-    } = invoiceInput.producto);
+    let { ivaPercentage, products = [], subtotal = 0 } = invoiceInput;
 
-    let count = await contentProduct.length;
-    let ivaporcen = invoiceInput.iva;
-    let Product= [];
-    let total=0;
-    let B = 0;let A = 1; 
-    for (let i = 0; i < count; i++) {
-      let productId = await contentProduct[i].productId;
+    if (!products.length) throw new Error('PRODUCTS_ARE_REQUIRED');
 
-      let valorTotalUnit =
-      await contentProduct[i].valorProduct*
-      await contentProduct[i].quantity;
-
-      Product.push({productId,valorTotalUnit});
-      }
-    let countTotal = Product.length;
-    let actotal = 0;
-    for (let j = 0; j < countTotal; j++) {
-      let valorTotalProduct = 
-      Product[B].valorTotalUnit;
-
-      actotal = valorTotalProduct + actotal;
-      total   = actotal;
-      B++; A++; 
+    for (let i = 0; i < products.length; i++) {
+      let product = products[i];
+      product.subtotal = product.price * product.quantity;
+      subtotal += product.subtotal;
     }
-
-    let { numInvoce, numProduct, pricetotal,Total,
-      Iva,iva,infoInvoice } = invoiceInput;
     
-     let ivat = (actotal*ivaporcen/100);
-      Total = actotal;
-      Iva = ivat;
-      infoInvoice=Product
-    await new invoice({
+    const number = await InvoiceModel.countDocuments();
+    const totalIva = subtotal * (ivaPercentage / 100);
+    const total = subtotal + totalIva;
+
+    const ID = generateId();
+    const newInvoice = await new InvoiceModel({
       _id: ID,
-      numInvoce,
-      producto: contentProduct,   
-      numProduct,
-      pricetotal,
-      infoInvoice,
-      Total,
-      Iva,
-      iva,
+      number: number + 1,
+      ivaPercentage,
+      subtotal,
+      totalIva,
+      total,
+      products,
     }).save();
-    return ID;
+
+    return newInvoice._id;
   } catch (e) {
     return e;
   }
 };
 
-const Invoice_Update = async (_, { invoiceInput }) => {
-  try {
-  
-   
-    await invoice.findByIdAndUpdate(
-      invoiceInput._id,
-      { $set: invoiceInput },
-      { new: true }
-    );
-    return invoiceInput._id
-  } catch (e) {
-    return e;
-  }
-};
-
-const Invoice_Save = async (_, { invoiceInput }) => {
-  try {
-    
-    const actions = {
-      create: Invoice_Create,
-      update: Invoice_Update,
-    };
-
-    const action = invoiceInput._id ? 'update' : 'create';
-    
-    return await actions[action](_, { invoiceInput });
-  } catch (e) {
-    return e;
-  }
-};
-
-
-const Invoice_Get = async (_, { filter = {}, option = {} }) => {
+const Invoice_get = async (_, { filter = {}, option = {} }) => {
   try {
     let query = { isRemove: false };
-    const find = invoice.find(query);
 
     let { _id, numInvoce } = filter;
     let { skip, limit } = handlePagination(option);
 
     if (_id) query._id = _id;
-    if (numInvoce) query.numInvoce = numInvoce;
+    if (numInvoce) query.numInvoce = { $regex: numInvoce, $options: 'i' };
 
+    const find = InvoiceModel.find(query);
 
-    if(skip){find.skip(skip)};
-    if(limit){find.limit(limit)}    
+    if (skip) {
+      find.skip(skip);
+    }
+    if (limit) {
+      find.limit(limit);
+    }
 
     return await find.exec();
   } catch (e) {
@@ -115,14 +60,10 @@ const Invoice_Get = async (_, { filter = {}, option = {} }) => {
   }
 };
 
- 
-
-
-
-const Invoice_Delete = async (_, { _id }) => {
+const Invoice_delete = async (_, { _id }) => {
   try {
     await invoice.findByIdAndUpdate(_id, {
-       $set: { isRemove: true } 
+      $set: { isRemove: true },
     });
 
     return true;
@@ -131,7 +72,7 @@ const Invoice_Delete = async (_, { _id }) => {
   }
 };
 
-const Invoice_Count = async (_, { filter = {} }) => {
+const Invoice_count = async (_, { filter = {} }) => {
   try {
     const count = await Invoice_Get(_, { filter });
     return count.length;
@@ -142,11 +83,11 @@ const Invoice_Count = async (_, { filter = {} }) => {
 
 module.exports = {
   Query: {
-    Invoice_Get,
-    Invoice_Count,
+    Invoice_get,
+    Invoice_count,
   },
   Mutation: {
-    Invoice_Save,
-    Invoice_Delete,
+    Invoice_create,
+    Invoice_delete,
   },
 };

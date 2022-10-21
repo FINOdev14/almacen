@@ -3,7 +3,9 @@ const express = require('express');
 const { ApolloServer } = require ('apollo-server-express');
 const { connect } = require('mongoose');
 const { makeExecutableSchema } = require('@graphql-tools/schema');
-
+const {
+  ApolloServerPluginLandingPageProductionDefault,
+} = require('apollo-server-core');
 //conexion
 const db = process.env.MONGODB;
 //conexion base de datos
@@ -19,9 +21,13 @@ app.get('/', (req,res)=>{
 });
 
 async function start() {
+
   const schema = makeExecutableSchema({ typeDefs,resolvers});
   const apolloServer = new ApolloServer({
-    schema
+    schema,
+    plugins: [ApolloServerPluginLandingPageProductionDefault({
+      embed: true
+    })]
   });
   await apolloServer.start();
   apolloServer.applyMiddleware({app});

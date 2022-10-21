@@ -1,29 +1,24 @@
-const invoiceSchema = [`
+const invoiceSchema = [
+  `
   type Invoice{
     _id: String
-    numInvoce: Int
-    producto: [Producto]
+    number: Int
+    ivaPercentage: Int
+    subtotal: Int
+    products: [products]
     numProduct: Int
-    infoInvoice: [InfoInvoice]
-    Total:Int
-    Iva:Int
-    iva: Float
+    totalIva: Int
+    total: Int
     createdAt: GraphQLDateTime
     updatedAt: GraphQLDateTime
     isRemove: Boolean
   }
-  type Producto{
+  type products{
     productId: String
-    nameProduct: String
-    quantity: Int
-    valorProduct: Int
-    
+    price: Int
+    quantity:Int
   }
-  type InfoInvoice{
-    productId: String
-    valorTotalUnit: Int
-    
-  }
+
   
 
   input Invoice_Filter{
@@ -31,33 +26,34 @@ const invoiceSchema = [`
     numInvoce: Int
   }
 
-  input Producto_Input{
+  input products_Input{
     productId: String
-    nameProduct: String
-    valorProduct: Int
-    quantity: Int
-    valortotal: Int
+    price: Int
+    quantity:Int
   }
 
   input Invoice_Input{
     _id: String
-    numInvoce: Int
-    producto: [Producto_Input]
+    number: Int
+    products: [products_Input]
+    ivaPercentage: Int
+    subtotal: Int
     numProduct: Int
-    pricetotal: Float
-    iva: Float
+    totalIva: Int
+    total: Int
   }
 
   type Query{
-    Invoice_Get(filter: Invoice_Filter, option:Option): [Invoice]
-    Invoice_Count(filter: Invoice_Filter):Int
+    Invoice_get(filter: Invoice_Filter, option:Option): [Invoice]
+    Invoice_count(filter: Invoice_Filter):Int
   }
 
   type Mutation{
-    Invoice_Save(invoiceInput: Invoice_Input):ID
-    Invoice_Delete(_id: String!): Boolean
+    Invoice_create(invoiceInput: Invoice_Input):ID
+    Invoice_delete(_id: String!): Boolean
   }
 
-`];
+`,
+];
 
 module.exports = invoiceSchema;
