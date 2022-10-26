@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"nodemon src/index.js"
+    "start": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -18,11 +18,16 @@
     "apollo-server": "^3.10.2",
     "apollo-server-core": "^3.10.2",
     "apollo-server-express": "^3.10.2",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
+    "express-validator": "^6.14.2",
     "graphql": "^16.6.0",
     "graphql-iso-date": "^3.6.1",
     "graphql-tools": "^8.3.6",
+    "gravatar": "^1.8.2",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.2"
   }
 }
