@@ -1,6 +1,6 @@
 const { generateId, handlePagination } = require('@codecraftkit/utils');
 
-const InvoiceModel = require('../Models/invoice');
+const InvoiceModel = require('../Models/Invoice');
 
 const Invoice_create = async (_, { invoiceInput = {} }) => {
   try {
@@ -74,7 +74,7 @@ const Invoice_delete = async (_, { _id }) => {
 
 const Invoice_count = async (_, { filter = {} }) => {
   try {
-    const count = await Invoice_Get(_, { filter });
+    const count = await Invoice_get(_, { filter });
     return count.length;
   } catch (e) {
     return e;

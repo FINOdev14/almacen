@@ -30,6 +30,7 @@ async function start() {
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   const apolloServer = new ApolloServer({
     schema,
+    context: ctx=>ctx.req,
     plugins: [
       ApolloServerPluginLandingPageProductionDefault({
         embed: true,

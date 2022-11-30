@@ -1,5 +1,5 @@
 const {  Schema, model} = require('mongoose');
-const collectionName = "invoice";
+const collectionName = 'InvoiceModel';
 
 const invoiceSchema = Schema(
   {
